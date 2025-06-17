@@ -7,9 +7,11 @@ __pycache__/
 .pytest_cache
 
 # Données et logs
-*.db
-*.log
+db/
+logs/
 mlruns/
+kuma_backup/
+kuma.db
 
 # Environnement
 .env

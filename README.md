@@ -38,6 +38,8 @@ monitoring/
 │── prometheus/
 │   └── alerts.yml                # Configuration des alertes pour Prometheus
 │   └── prometheus.yml            # Configuration générale de Prometheus
+└── uptime-kuma
+    └── kuma.db                  # Configuration générale de Uptime Kuma (sera généré à la première utilsation de Kuma)
 
 # Dossiers de données persistantes
 db/
@@ -54,6 +56,14 @@ requirements.txt                  # Dépendances Python globales pour le dévelo
 
 ## Utisation en production
 
+**Copier et éditer le fichier .env**
+
+```sh
+cp .env_example .env
+```
+
+**Lancement via Docker**
+
 ```sh
 docker compose up -d --build
 ```
@@ -65,6 +75,10 @@ docker compose up -d --build
 - **Uptime Kuma** → http://localhost:3001
 - **Grafana** → http://localhost:3000 (admin / admin)
 - **Prometheus** → http://localhost:9090
+
+**Configurez Kuma**
+
+Visitez http://localhost:3001 et ajoutez le health check de l'API: http://api:8069/health ainsi qu'une notiofication Discord avec votre webhook.
 
 ## Installation pour usage en local
 
@@ -111,6 +125,7 @@ uvicorn main:app --reload
 Elle sera accessible à l’adresse : http://localhost:8000/docs
 
 **Pour le pipeline Prefect**
+
 ```sh
 cd prefect
 prefect server start
@@ -123,3 +138,4 @@ L’interface web sera disponible sur : http://localhost:4200
 python flow.py
 ```
 
+L'interface Kuma pour la configuration se trouve sur http://localhost:3001

@@ -110,7 +110,13 @@ def periodic_check():
         retrain()
         return
 
-    if prediction == 0:
+    if prediction is None:
+        logger.warning("⚠️ Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.")
+        send_discord("Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.", status="Warning", title="⚠️ Données manquantes")
+        generate()
+        time.sleep(1)
+        retrain()
+    elif prediction == 0:
         logger.warning("⚠️ Mauvaise prédiction. Réentraînement nécessaire.")
         send_discord("⚠️ Mauvaise prédiction détectée. Réentraînement nécessaire.", status="Warning", title="⚠️ Réentraînement nécessaire")
         generate()
@@ -119,7 +125,6 @@ def periodic_check():
     else:
         logger.info("✅ Le modèle fonctionne correctement.")
         send_discord("Le modèle fonctionne correctement.", status="Succès", title="✅ Modèle stable")
-
 
 if __name__ == "__main__":
     while True:

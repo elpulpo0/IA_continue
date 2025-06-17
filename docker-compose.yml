@@ -1,21 +1,27 @@
 services:
-  app:
+  api:
     build:
       context: ./app
       dockerfile: Dockerfile
-    container_name: fastapi_app
+    container_name: api
     ports:
       - "8069:8069"
     restart: unless-stopped
+    networks:
+      - ia_continue
 
-  uptime-kuma:
+  kuma:
     image: louislam/uptime-kuma:latest
-    container_name: uptime_kuma
+    container_name: kuma
+    depends_on:
+      - api
     ports:
       - "3001:3001"
     volumes:
-      - uptime-kuma-data:/app/data
+      - ./monitoring/uptime-kuma:/app/data
     restart: unless-stopped
+    networks:
+      - ia_continue
 
   prefect-server:
     image: prefecthq/prefect:3-latest
@@ -24,21 +30,25 @@ services:
     ports:
       - "4200:4200"
     volumes:
-      - prefect_data:/root/.prefect
+      - prefect-data:/root/.prefect
     restart: unless-stopped
+    networks:
+      - ia_continue
 
-  random-check:
-    container_name: random-check
+  prefect:
+    container_name: prefect
     build:
       context: ./prefect
       dockerfile: Dockerfile
     depends_on:
       - prefect-server
     environment:
-      - FASTAPI_URL=http://app:8069
-    env_file:
+      - FASTAPI_URL=http://api:8069
+    env_file:   
       - ./.env
     restart: unless-stopped
+    networks:
+      - ia_continue
 
   prometheus:
     image: prom/prometheus:latest
@@ -49,6 +59,8 @@ services:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml
     restart: unless-stopped
+    networks:
+      - ia_continue
 
   grafana:
     image: grafana/grafana:latest
@@ -61,10 +73,12 @@ services:
       - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
+    networks:
+      - ia_continue
   
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.52.1
-    container_name: monitoring_cadvisor
+    container_name: cadvisor
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -76,8 +90,14 @@ services:
     devices:
       - /dev/kmsg
     privileged: true
+    networks:
+      - ia_continue
 
 volumes:
-  prefect_data:
   uptime-kuma-data:
+  prefect-data:
   grafana-storage:
+
+networks:
+  ia_continue:
+    driver: bridge
