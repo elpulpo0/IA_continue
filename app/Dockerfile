@@ -1,24 +1,28 @@
-# Utiliser une image Python de base plus récente
-FROM python:3.11
+FROM python:3.13-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Installer les dépendances système nécessaires
+RUN apk update && apk add --no-cache \
     gcc \
     g++ \
-    build-essential \
+    libffi-dev \
+    musl-dev \
     python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+    build-base \
+    linux-headers \
+    libpq-dev
 
-# Définir le répertoire de travail dans le conteneur
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers requirements.txt et installer les dépendances
+# Copier les dépendances Python
 COPY requirements.txt .
+
+# Installer pip + requirements
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste du code de l'application dans le conteneur
+# Copier le code source
 COPY . .
 
-# Commande d'exécution pour lancer l'application
+# Lancer l'application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8069"]
