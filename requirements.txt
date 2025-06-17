@@ -3,3 +3,9 @@ uvicorn
 loguru
 requests
 prefect
+scikit-learn
+pandas
+sqlalchemy
+mlflow
+pytest
+dotenv

@@ -1,20 +1,55 @@
+import os
 import requests
+from datetime import datetime
+from dotenv import load_dotenv
+from config.logger import configure_logger
 
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1384074750946705500/vGftTVhKZfOQU_Jba8AppR0o4_n3O2esBlF8Q8bqDZJQt-QeEa3CZ7kFlaWvh6tCDA1g"
+logger = configure_logger()
 
-def send_discord_embed(message):
-    """Envoyer un message à un canal Discord via un Webhook."""
-    data = {"embeds": [{
-                "title": "Prefect test",
-                "description": message,
-                "color": 5814783,
-                "fields": [{
-                        "name": "Status",
-                        "value": "Succès",
-                        "inline": True
-                    }]}]}
-    response = requests.post(DISCORD_WEBHOOK_URL, json=data)
-    if response.status_code != 204:
-        print(f"Erreur lors de l'envoi de l'embed : {response.status_code}")
+load_dotenv()
+
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+
+
+def send_discord_embed(
+    message: str,
+    title: str = "Notification Prefect",
+    status: str = "Info",
+    color: int = 3447003
+):
+    """
+    Envoie un message enrichi (embed) à un canal Discord via un Webhook.
+
+    :param message: Le message principal (dans 'description').
+    :param title: Titre de l'embed (par défaut : "Notification Prefect").
+    :param status: Statut affiché dans les champs (ex: Succès, Erreur...).
+    :param color: Couleur de l'embed (int format Discord).
+    """
+    if not DISCORD_WEBHOOK_URL:
+        print("⚠️ DISCORD_WEBHOOK_URL non défini.")
+        return
+
+    embed = {
+        "title": title,
+        "description": message,
+        "color": color,
+        "fields": [
+            {
+                "name": "Status",
+                "value": status,
+                "inline": True
+            },
+            {
+                "name": "Horodatage",
+                "value": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+                "inline": False
+            }
+        ]
+    }
+
+    response = requests.post(DISCORD_WEBHOOK_URL, json={"embeds": [embed]})
+
+    if response.status_code not in (200, 204):
+        logger.error(f"❌ Erreur lors de l'envoi à Discord ({response.status_code}) : {response.text}")
     else:
-        print("Embed envoyé avec succès !")
+        logger.info(f"✅ Message Discord envoyé ({status})")

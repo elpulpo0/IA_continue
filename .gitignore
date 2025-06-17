@@ -1,50 +1,19 @@
-.DS_Store
-node_modules
-dist
-tsconfig.tsbuildinfo
-
-# local env files
-.env.local
-.env.*.local
-
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Virtual Environment
+# Environnements virtuels
 .venv/
 
-# Python
+# Python cache
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-__init__.py
-
-# Pytest
+*.py[cod]
 .pytest_cache
 
-# System
-.DS_Store
-**/.DS_Store
+# Données et logs
+*.db
+*.log
+mlruns/
 
-# Environment
+# Environnement
 .env
 
 # IDE
 .vscode/
 .idea/
-
-# Generated Data
-logs/*
