@@ -11,3 +11,10 @@ pytest
 dotenv
 flake8
 black
+streamlit
+python-jose
+bcrypt
+PyYAML
+sqlalchemy
+pydantic[email]
+python-multipart

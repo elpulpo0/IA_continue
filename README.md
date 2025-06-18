@@ -1,6 +1,6 @@
 # IA_Continue
 
-Ce projet est une architecture modulaire regroupant une API **FastAPI** pour la génération de datasets et la prédiction via **MLflow**, un pipeline de traitement asynchrone orchestré avec **Prefect** pour l’automatisation des workflows, ainsi que des outils de monitoring et de surveillance (**Uptime Kuma**, **Grafana**, **Prometheus**, **cAdvisor**). Le tout est intégré et déployé facilement grâce à **Docker Compose**.
+Ce projet est une architecture modulaire regroupant une API **FastAPI** pour la génération de datasets et la prédiction via **MLflow**, un pipeline de traitement asynchrone orchestré avec **Prefect** pour l’automatisation des workflows, une interface **Streamlit** pour l'API ainsi que des outils de monitoring et de surveillance (**Uptime Kuma**, **Grafana**, **Prometheus**, **cAdvisor**). Le tout est intégré et déployé facilement grâce à **Docker Compose**.
 
 ## Structure
 
@@ -44,6 +44,26 @@ monitoring/
 └── uptime-kuma
     └── kuma.db                  # Configuration générale de Uptime Kuma (sera généré à la première utilsation de Kuma)
 
+# Partie Interface
+streamlit/
+├── Dockerfile
+├── app.py                        # Fichier pour démarrer l'interface Streamlit
+└── requirements.txt              # Dépendances Python spécifiques à l'application Streamlit
+
+# Partie gestions utilisateurs
+users/:
+├── config/
+|   └── logger.py                 # Configuration du logger
+├── modules/
+|   └── api/
+│   │   └── auth/                 # Contient les fichiers de configuration de l'API
+│   │   └── users/                # Contient les fichiers d'initialisations de l'application
+|   └── database/                 # Contient les fichiers de configuration de la base donnée
+├── Dockerfile
+├── run.py                        # Fichier pour démarrer l'API
+└── requirements.txt              # Dépendances Python spécifiques à l'application FastAPI
+
+
 # Fichiers de configuration et utilitaires
 .gitignore                        # Liste des fichiers et dossiers ignorés par Git
 README.md                         # Documentation et informations générales du projet
@@ -60,6 +80,12 @@ requirements.txt                  # Dépendances Python globales pour le dévelo
 cp .env_example .env
 ```
 
+**Créez et éditez le fichier des utilsateurs initiaux**
+
+```sh
+cp users/modules/api/users/initial_users.yaml.example users/modules/api/users/initial_users.yaml
+```
+
 **Lancement via Docker**
 
 ```sh
@@ -73,6 +99,7 @@ docker compose up -d --build
 - **Uptime Kuma** → http://localhost:3001
 - **Grafana** → http://localhost:3000 (admin / admin)
 - **Prometheus** → http://localhost:9090
+- **Streamlit** → http://localhost:8501
 
 **Configurez Kuma**
 
@@ -137,3 +164,11 @@ python flow.py
 ```
 
 L'interface Kuma pour la configuration se trouve sur http://localhost:3001
+
+**Pour l'interface Streamlit'**
+
+```sh
+cd streamlit
+streamlit run app.py
+```
+L’application sera disponible sur : http://localhost:8501

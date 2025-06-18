@@ -7,6 +7,12 @@ __pycache__/
 .pytest_cache
 __init__.py
 
+# Fichiers node
+.DS_Store
+node_modules
+dist
+tsconfig.tsbuildinfo
+
 # Données et logs
 db/
 logs/
@@ -20,3 +26,6 @@ kuma.db
 # IDE
 .vscode/
 .idea/
+
+# Autre
+users/modules/api/users/initial_users.yaml

@@ -1,0 +1,20 @@
+roles:
+  - admin
+  - reader
+  - editor
+
+users:
+  - name: Alice Admin
+    email: alice@admin.com
+    password: secret123
+    role: admin
+
+  - name: Bob Editor
+    email: bob@editor.com
+    password: secret456
+    role: editor
+
+  - name: Eve Editor
+    email: eve@editor.com
+    password: secret789
+    role: editor

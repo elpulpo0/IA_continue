@@ -54,9 +54,12 @@ groups:
     expr: absent(container_memory_usage_bytes{name="grafana"}) or
           absent(container_memory_usage_bytes{name="node_exporter"}) or
           absent(container_memory_usage_bytes{name="cadvisor"}) or
-          absent(container_memory_usage_bytes{name="alertmanager"}) or
-          absent(container_memory_usage_bytes{name="versus-incident"}) or
-          absent(container_memory_usage_bytes{name="apisecure_backend"})
+          absent(container_memory_usage_bytes{name="api"}) or
+          absent(container_memory_usage_bytes{name="prefect"}) or
+          absent(container_memory_usage_bytes{name="prefect-server"}) or
+          absent(container_memory_usage_bytes{name="streamlit"}) or
+          absent(container_memory_usage_bytes{name="kuma"})
+
     for: 30s
     labels:
       severity: critical

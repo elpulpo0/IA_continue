@@ -7,8 +7,13 @@ services:
     ports:
       - "8069:8069"
     restart: unless-stopped
+    environment:
+      - INTERFACE_URL=http://interface:8081
     networks:
       - ia_continue
+    volumes:
+      - api-logs:/app/logs
+      
 
   kuma:
     image: louislam/uptime-kuma:latest
@@ -27,6 +32,8 @@ services:
     image: prefecthq/prefect:3-latest
     command: prefect server start --host 0.0.0.0
     container_name: prefect-server
+    depends_on:
+      - api
     ports:
       - "4200:4200"
     volumes:
@@ -93,10 +100,48 @@ services:
     networks:
       - ia_continue
 
+  interface:
+    build:
+      context: ./interface
+      dockerfile: Dockerfile
+    container_name: interface
+    environment:
+      - VITE_FASTAPI_URL=http://api:8069
+      - VITE_USERS_URL=http://users:8099
+    depends_on:
+      - users
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    networks:
+      - ia_continue
+
+  users:
+    container_name: users
+    build:
+      context: ./users
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - users-database:/app/database
+      - users-logs:/app/logs
+    env_file:   
+      - ./.env
+    environment:
+      - INTERFACE_URL=http://interface:8081
+    command: ["uvicorn", "run:app", "--host", "0.0.0.0", "--port", "8099", "--log-level", "warning"]
+    ports:
+      - "8099:8099"
+    networks:
+      - ia_continue
+
 volumes:
   uptime-kuma-data:
   prefect-data:
   grafana-storage:
+  users-database:
+  users-logs:
+  api-logs:
 
 networks:
   ia_continue:
