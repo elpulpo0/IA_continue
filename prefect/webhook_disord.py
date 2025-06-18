@@ -15,7 +15,7 @@ def send_discord_embed(
     message: str,
     title: str = "Notification Prefect",
     status: str = "Info",
-    color: int = 3447003
+    color: int = 3447003,
 ):
     """
     Envoie un message enrichi (embed) à un canal Discord via un Webhook.
@@ -34,22 +34,20 @@ def send_discord_embed(
         "description": message,
         "color": color,
         "fields": [
-            {
-                "name": "Status",
-                "value": status,
-                "inline": True
-            },
+            {"name": "Status", "value": status, "inline": True},
             {
                 "name": "Horodatage",
                 "value": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
-                "inline": False
-            }
-        ]
+                "inline": False,
+            },
+        ],
     }
 
     response = requests.post(DISCORD_WEBHOOK_URL, json={"embeds": [embed]})
 
     if response.status_code not in (200, 204):
-        logger.error(f"❌ Erreur lors de l'envoi à Discord ({response.status_code}) : {response.text}")
+        logger.error(
+            f"❌ Erreur lors de l'envoi à Discord ({response.status_code}) : {response.text}"
+        )
     else:
         logger.info(f"✅ Message Discord envoyé ({status})")

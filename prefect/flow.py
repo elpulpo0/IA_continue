@@ -13,13 +13,14 @@ PYTHONIOENCODING = os.getenv("PYTHONIOENCODING", "utf-8")
 PREFECT_API_URL = os.getenv("PREFECT_API_URL", "http://127.0.0.1:4200/api")
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
 
+
 def send_discord(message: str, status: str = "Succès", title: str = None):
     """Fonction utilitaire pour envoyer un message Discord avec titre et couleur adaptés."""
     colors = {
-        "Succès": 0x2ecc71,    # vert
-        "Erreur": 0xe74c3c,    # rouge
-        "Warning": 0xf1c40f,   # jaune
-        "Info": 3447003        # bleu par défaut
+        "Succès": 0x2ECC71,  # vert
+        "Erreur": 0xE74C3C,  # rouge
+        "Warning": 0xF1C40F,  # jaune
+        "Info": 3447003,  # bleu par défaut
     }
     if title is None:
         if status == "Succès":
@@ -43,27 +44,43 @@ def predict():
         response = requests.get(f"{FASTAPI_URL}/predict", timeout=5)
     except Exception as e:
         logger.error(f"❌ Erreur réseau pendant la prédiction : {e}")
-        send_discord(f"Erreur réseau pendant la prédiction : {e}", status="Erreur", title="❌ Erreur de prédiction")
+        send_discord(
+            f"Erreur réseau pendant la prédiction : {e}",
+            status="Erreur",
+            title="❌ Erreur de prédiction",
+        )
         raise
 
     # Si la réponse est 400, on considère qu'il n'y a pas assez de données / modèle
     if response.status_code == 400:
         data = response.json()
         logger.warning(f"⚠️ 400 Bad Request: {data.get('error')}")
-        send_discord(f"Prédiction impossible : {data.get('error')}", status="Warning", title="⚠️ Prédiction impossible")
+        send_discord(
+            f"Prédiction impossible : {data.get('error')}",
+            status="Warning",
+            title="⚠️ Prédiction impossible",
+        )
         return None
 
     # Pour tout autre code d’erreur HTTP >= 401, on lève pour déclencher le retry
     if response.status_code >= 401:
         logger.error(f"❌ Erreur HTTP {response.status_code} pendant la prédiction.")
-        send_discord(f"Erreur HTTP {response.status_code} pendant la prédiction.", status="Erreur", title="❌ Erreur HTTP Prédiction")
+        send_discord(
+            f"Erreur HTTP {response.status_code} pendant la prédiction.",
+            status="Erreur",
+            title="❌ Erreur HTTP Prédiction",
+        )
         response.raise_for_status()
 
     # Enfin, cas 200 OK
     result = response.json()
     prediction = result.get("prediction")
     logger.info(f"✅ Prédiction : {prediction}")
-    send_discord(f"Prédiction réussie : {prediction}", status="Succès", title="🎯 Prédiction effectuée")
+    send_discord(
+        f"Prédiction réussie : {prediction}",
+        status="Succès",
+        title="🎯 Prédiction effectuée",
+    )
     return prediction
 
 
@@ -74,10 +91,18 @@ def generate():
         response = requests.post(f"{FASTAPI_URL}/generate", timeout=5)
         response.raise_for_status()
         logger.info("📦 Dataset généré avec succès.")
-        send_discord("Nouveau jeu de données généré avec succès.", status="Succès", title="🧬 Nouveau jeu de données")
+        send_discord(
+            "Nouveau jeu de données généré avec succès.",
+            status="Succès",
+            title="🧬 Nouveau jeu de données",
+        )
     except Exception as e:
         logger.error(f"Erreur lors de la génération du dataset : {e}")
-        send_discord(f"Erreur lors de la génération du dataset : {e}", status="Erreur", title="🚨 Erreur génération dataset")
+        send_discord(
+            f"Erreur lors de la génération du dataset : {e}",
+            status="Erreur",
+            title="🚨 Erreur génération dataset",
+        )
         raise e
 
 
@@ -88,10 +113,18 @@ def retrain():
         response = requests.post(f"{FASTAPI_URL}/retrain", timeout=10)
         response.raise_for_status()
         logger.info("🔁 Modèle réentraîné avec succès.")
-        send_discord("Le modèle a été réentraîné avec succès.", status="Succès", title="🔁 Réentraînement du modèle")
+        send_discord(
+            "Le modèle a été réentraîné avec succès.",
+            status="Succès",
+            title="🔁 Réentraînement du modèle",
+        )
     except Exception as e:
         logger.error(f"Erreur lors du réentraînement : {e}")
-        send_discord(f"Erreur lors du réentraînement : {e}", status="Erreur", title="🚨 Échec d'entraînement")
+        send_discord(
+            f"Erreur lors du réentraînement : {e}",
+            status="Erreur",
+            title="🚨 Échec d'entraînement",
+        )
         raise e
 
 
@@ -103,28 +136,49 @@ def periodic_check():
     try:
         prediction = predict()
     except Exception:
-        logger.warning("💥 Échec total de la prédiction après retries. Tentative de réentraînement...")
-        send_discord("Échec total de la prédiction après retries. Tentative de réentraînement...", status="Erreur", title="💥 Échec de prédiction")
+        logger.warning(
+            "💥 Échec total de la prédiction après retries. Tentative de réentraînement..."
+        )
+        send_discord(
+            "Échec total de la prédiction après retries. Tentative de réentraînement...",
+            status="Erreur",
+            title="💥 Échec de prédiction",
+        )
         generate()
         time.sleep(1)
         retrain()
         return
 
     if prediction is None:
-        logger.warning("⚠️ Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.")
-        send_discord("Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.", status="Warning", title="⚠️ Données manquantes")
+        logger.warning(
+            "⚠️ Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires."
+        )
+        send_discord(
+            "Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.",
+            status="Warning",
+            title="⚠️ Données manquantes",
+        )
         generate()
         time.sleep(1)
         retrain()
     elif prediction == 0:
         logger.warning("⚠️ Mauvaise prédiction. Réentraînement nécessaire.")
-        send_discord("⚠️ Mauvaise prédiction détectée. Réentraînement nécessaire.", status="Warning", title="⚠️ Réentraînement nécessaire")
+        send_discord(
+            "⚠️ Mauvaise prédiction détectée. Réentraînement nécessaire.",
+            status="Warning",
+            title="⚠️ Réentraînement nécessaire",
+        )
         generate()
         time.sleep(1)
         retrain()
     else:
         logger.info("✅ Le modèle fonctionne correctement.")
-        send_discord("Le modèle fonctionne correctement.", status="Succès", title="✅ Modèle stable")
+        send_discord(
+            "Le modèle fonctionne correctement.",
+            status="Succès",
+            title="✅ Modèle stable",
+        )
+
 
 if __name__ == "__main__":
     while True:

@@ -13,7 +13,10 @@ app/
 ├── database.py                   # Configuration et gestion de la base de données SQLite
 ├── main.py                       # Point d'entrée : lancement de l'application FastAPI
 ├── requirements.txt              # Dépendances Python spécifiques à l'application FastAPI
-└── routes.py                     # Définition des routes et endpoints de l'API FastAPI
+├── db/
+|   ├── data.db                   # Base de données SQLite utilisée pour stocker les datasets générés
+|   └── mlruns.db                 # Base de données SQLite utilisée par MLflow pour suivre les expériences
+├── routes.py                     # Définition des routes et endpoints de l'API FastAPI
 └── tests/
     └── test_routes.py            # Tests unitaires et d’intégration des routes FastAPI
 
@@ -40,11 +43,6 @@ monitoring/
 │   └── prometheus.yml            # Configuration générale de Prometheus
 └── uptime-kuma
     └── kuma.db                  # Configuration générale de Uptime Kuma (sera généré à la première utilsation de Kuma)
-
-# Dossiers de données persistantes
-db/
-├── data.db                       # Base de données SQLite utilisée pour stocker les datasets générés
-└── mlruns.db                     # Base de données SQLite utilisée par MLflow pour suivre les expériences
 
 # Fichiers de configuration et utilitaires
 .gitignore                        # Liste des fichiers et dossiers ignorés par Git

@@ -5,16 +5,16 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 def log_format(record):
     my_name = record["extra"].get("my_name", record["name"])
-    custom = "Custom logs by El Pulpo"
     return (
-        # f"<green>{custom}</green> | "
         f"<cyan>{record['time']:YYYY-MM-DD HH:mm:ss}</cyan> | "
         f"<blue>{my_name}</blue> | "
         f"<level>{record['level'].name}</level> | "
         f"<magenta>{record['message']}</magenta>\n"
     )
+
 
 def configure_logger(my_name=None):
     logger.remove()

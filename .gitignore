@@ -5,6 +5,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache
+__init__.py
 
 # Données et logs
 db/
