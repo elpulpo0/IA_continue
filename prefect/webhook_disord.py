@@ -47,8 +47,8 @@ def send_discord_embed(
 
     if response.status_code not in (200, 204):
         logger.error(
-            f"❌ Erreur lors de l'envoi à "
-            "Discord ({response.status_code}) : {response.text}"
+            "❌ Erreur lors de l'envoi à "
+            f"Discord ({response.status_code}) : {response.text}"
         )
     else:
         logger.info(f"✅ Message Discord envoyé ({status})")

@@ -60,7 +60,7 @@ def generate_dataset():
         session.add(entry)
     session.commit()
     session.close()
-    logger.info(f"Dataset generated successfully")
+    logger.info("Dataset generated successfully")
     return {"message": "Dataset generated successfully"}
 
 
