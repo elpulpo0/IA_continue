@@ -15,7 +15,8 @@ FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
 
 
 def send_discord(message: str, status: str = "Succès", title: str = None):
-    """Fonction utilitaire pour envoyer un message Discord avec titre et couleur adaptés."""
+    """Fonction utilitaire pour envoyer un message 
+    Discord avec titre et couleur adaptés."""
     colors = {
         "Succès": 0x2ECC71,  # vert
         "Erreur": 0xE74C3C,  # rouge
@@ -137,10 +138,12 @@ def periodic_check():
         prediction = predict()
     except Exception:
         logger.warning(
-            "💥 Échec total de la prédiction après retries. Tentative de réentraînement..."
+            "💥 Échec total de la prédiction après retries. " \
+            "Tentative de réentraînement..."
         )
         send_discord(
-            "Échec total de la prédiction après retries. Tentative de réentraînement...",
+            "Échec total de la prédiction après retries. " \
+            "Tentative de réentraînement...",
             status="Erreur",
             title="💥 Échec de prédiction",
         )
@@ -151,10 +154,12 @@ def periodic_check():
 
     if prediction is None:
         logger.warning(
-            "⚠️ Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires."
+            "⚠️ Aucune donnée disponible pour la prédiction. " \
+            "Génération et réentraînement nécessaires."
         )
         send_discord(
-            "Aucune donnée disponible pour la prédiction. Génération et réentraînement nécessaires.",
+            "Aucune donnée disponible pour la prédiction. " \
+            "Génération et réentraînement nécessaires.",
             status="Warning",
             title="⚠️ Données manquantes",
         )
@@ -162,9 +167,11 @@ def periodic_check():
         time.sleep(1)
         retrain()
     elif prediction == 0:
-        logger.warning("⚠️ Mauvaise prédiction. Réentraînement nécessaire.")
+        logger.warning("⚠️ Mauvaise prédiction. " \
+        "Réentraînement nécessaire.")
         send_discord(
-            "⚠️ Mauvaise prédiction détectée. Réentraînement nécessaire.",
+            "⚠️ Mauvaise prédiction détectée. " \
+            "Réentraînement nécessaire.",
             status="Warning",
             title="⚠️ Réentraînement nécessaire",
         )
