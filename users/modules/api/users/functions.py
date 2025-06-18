@@ -6,7 +6,6 @@ from config.logger import configure_logger
 from dotenv import load_dotenv
 import os
 from modules.api.users.schemas import TokenData
-from fastapi import Depends, HTTPException, status
 from modules.database.dependencies import get_users_db
 from pydantic import ValidationError
 from jose import JWTError, jwt

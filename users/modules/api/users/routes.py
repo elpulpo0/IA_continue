@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from modules.api.users.schemas import UserResponse
 from config.logger import configure_logger
 from modules.database.dependencies import get_users_db
 from modules.api.users.functions import get_current_user, get_user_by_email

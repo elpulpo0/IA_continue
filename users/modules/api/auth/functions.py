@@ -40,9 +40,15 @@ def create_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     if token_type == "access":
-        logger.info(f"Token {token_type} créé (role: {role}) – Expiration : {expire.strftime("%Y-%m-%d %H:%M:%S")}")
+        logger.info(
+            f"Token {token_type} créé (role: {role}) – "
+            f"Expiration : {expire.strftime('%Y-%m-%d %H:%M:%S')}"
+        )
     else:
-        logger.info(f"Token {token_type} créé – Expiration : {expire.strftime("%Y-%m-%d %H:%M:%S")}")
+        logger.info(
+            f"Token {token_type} créé – "
+            f"Expiration : {expire.strftime('%Y-%m-%d %H:%M:%S')}"
+        )
 
     return encoded_jwt
 
@@ -74,7 +80,7 @@ def store_refresh_token(db: Session, user_id: int, token: str, expires_at: datet
     db.query(RefreshToken).filter(
         RefreshToken.user_id == user_id,
         RefreshToken.app_name == app_name,
-        RefreshToken.revoked == False
+        RefreshToken.revoked.is_(False)
     ).update({RefreshToken.revoked: True}, synchronize_session=False)
 
     # Ajoute le nouveau token
