@@ -34,6 +34,8 @@ jobs:
         run: |
           flake8 --max-line-length=90 .
 
-      - name: Run tests with pytest
+      - name: Run tests
         run: |
           pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}
