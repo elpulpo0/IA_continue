@@ -9,3 +9,5 @@ sqlalchemy
 mlflow
 pytest
 dotenv
+flake8
+black
